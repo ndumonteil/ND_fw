@@ -1,0 +1,7 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^andrea-et-nicolas.me
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^(.*)$ /web/index.php
+RewriteCond %{HTTP_HOST} ^localhost
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^(.*)$ /andrea-et-nicolas/web/index.php

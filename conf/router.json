@@ -1,0 +1,15 @@
+{
+    "front": {
+        "accueil": {
+            "url": "",
+            "parameters":"",
+            "controller": "accueil",
+            "action": "show"
+        }
+    },
+    "back": {
+
+
+
+    }
+}

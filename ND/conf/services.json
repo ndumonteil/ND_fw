@@ -1,0 +1,13 @@
+{
+    "init": {
+        "logger": {
+            "class": "Logger"
+        },
+        "router": {
+            "class": "Router",
+            "dependencies": "logger"
+        }
+    },
+    "pre_control": {},
+    "post_control": {}
+}
