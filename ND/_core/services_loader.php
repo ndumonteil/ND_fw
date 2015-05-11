@@ -1,10 +1,7 @@
 <?php
 namespace ND\core;
 
-use ND\core\service as core_service;
-use app\service as app_service;
-
-class Event_listener {
+class Services_loader {
 
     /**
      * Initialisation of framework
@@ -16,21 +13,45 @@ class Event_listener {
     /**
      * Before request processing
      * Begin : kernel run()
+     * => after initializing router : services loaded here can re-route the request)
      * End : instanciation of controller in kernel run()
      */
     const EVENT_PRE_CONTROL= 'pre_control';
 
     /**
      * Before returning response
-     * Begin : running controller action in kernel run()
+     * Begin : return controller action in kernel run()
+     * => after
      * End : return controller response by kernel
      */
     const EVENT_POST_CONTROL= 'post_control';
 
-    private $_phase= self::EVENT_INIT;
+    /**
+     * Actual phase
+     * @var string
+     */
+    private $_phase;
 
+    /**
+     * Temporary array containing all services in a specific phase to be processed
+     * @var array
+     */
     private $_services_to_load;
+
+    /**
+     * Flag to stop loop services loading
+     * @var type
+     */
     private $_loading_finished;
+
+    private $_service_pathx= [
+        'core'=> ND_PATH__FW_SERVICE,
+        'app'=> ND_PATH__APP_SERVICE,
+    ];
+
+    private $_service_namespacex= [
+        'core'=> 'ND\\core\\service\\',
+    ];
 
     public function __construct(){}
 
@@ -40,8 +61,8 @@ class Event_listener {
      */
     public function change_phase( $_phase){
         $this->_phase= $_phase;
-        $configurator= Registry::get_instance()
-            ->get_service( Registry::CORE_SERVICE_NAME__CONFIGURATOR);
+        $configurator= Services_registry::get_instance()
+            ->get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
         $this->_services_to_load= [
             'core'=> $configurator->get_core_conf( 'services', [ $this->_phase]),
             'app'=> $configurator->get_app_conf( 'services', [ $this->_phase]),
@@ -60,7 +81,10 @@ class Event_listener {
         foreach( $this->_services_to_load as $type=> $servicex){
             foreach( $servicex as $name=> $paramx){
                 $loaded= $this->_try_to_load( $type, $name, $paramx);
-                if( $loaded) $nb_of_services_loaded++;
+                if( $loaded){
+                    unset( $this->_services_to_load[ $type][ $name]);
+                    $nb_of_services_loaded++;
+                }
             }
         }
         if( ! $nb_of_services_loaded){
@@ -72,24 +96,26 @@ class Event_listener {
         $missing_deps= false;
         if( isset( $_paramx[ 'dependencies'])){
             foreach( $_paramx[ 'dependencies'] as $needed){
-                if( ! Registry::get_instance()->has_service( $needed)){
+                if( ! Services_registry::get_instance()->has_service( $needed)){
                     $missing_deps= true;
                     break;
                 }
             }
         }
         if( $missing_deps) return false;
+        /// Instanciation
         $service_class=
-            ( $_type == 'core' ? 'core_service\\' : 'app_service\\')
+            $this->_service_namespacex[ $_type]
             . ( @$_paramx[ 'class'] ?: ucfirst( $_name));
         $service_file= @$_paramx[ 'file'] ?: $_name . '.php';
         $service_path=
-            ( $_type == 'core' ? ND_PATH__FW_SERVICE : ND_PATH__APP_SERVICE)
+            $this->_service_pathx[ $_type]
             . DIRECTORY_SEPARATOR
             . $service_file;
         require_once $service_path;
-        $service= new $service_class;
-        Registry::get_instance()->add_service( $_name, $service);
+        $service= new $service_class();
+        ///
+        Services_registry::get_instance()->add_service( $_name, $service);
         return true;
     }
 

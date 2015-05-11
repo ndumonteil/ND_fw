@@ -3,7 +3,7 @@ namespace ND\core;
 
 //use ND\exception as e;
 
-class Registry {
+class Services_registry {
 
     const CORE_SERVICE_NAME__CONFIGURATOR= 'configurator';
     const CORE_SERVICE_NAME__ROUTER= 'router';

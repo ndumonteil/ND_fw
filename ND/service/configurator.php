@@ -13,8 +13,10 @@ class Configurator {
     const CONF_NAME__ROUTER= 'router';
     const CONF_NAME__LOGGER= 'logger';
 
-    private $_init_conf= [
-        'conf_filetype'=> 'yaml', // default
+    private $_init_conf= [ // default params surcharged by __construct
+        'conf_filetype'=> 'yaml',
+        'app_controller_namespace'=> 'app\\controller\\',
+        'app_service_namespace'=> 'app\\service\\',
     ];
     private $_app_confx; // container for app confs (lazy loaded)
     private $_core_confx; // container for core confs (lazy loaded)
