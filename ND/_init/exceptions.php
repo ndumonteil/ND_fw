@@ -92,6 +92,11 @@ class not_implemented_e extends non_runtime_e {}
 class not_supported_e extends non_runtime_e {}
 
 /**
+ * Service is instancied twice or more time
+ */
+class duplicate_service_e extends non_runtime_e {}
+
+/**
  * Thrown if arg is invalid.
  **/
 class bad_arg_e extends non_runtime_e {}
@@ -100,6 +105,11 @@ class bad_arg_e extends non_runtime_e {}
  * Thrown if some arg is missing (arg passed but holding NULL eg)
  **/
 class missing_arg_e extends bad_arg_e {}
+
+/**
+ * Thrown if an name argument is reserved by core elements
+ */
+class name_reserved_e extends bad_arg_e {}
 
 /**
  * Thrown on internal inconsistency

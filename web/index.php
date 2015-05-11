@@ -1,5 +1,5 @@
 <?php
-use ND\kernel;
+use \ND;
 
 if( ! defined( 'ND_PATH__ROOT')){
     define('ND_PATH__ROOT', dirname(__DIR__) . DIRECTORY_SEPARATOR);
@@ -16,5 +16,6 @@ $init_conf= [
     'conf_filetype'=> 'json',
 ];
 
-kernel\Kernel::get_instance()->init( $init_conf, 'front');
-kernel\Kernel::get_instance()->run();
+
+ND\Kernel::get_instance()->init( $init_conf, 'front');
+ND\Kernel::get_instance()->run();

@@ -28,11 +28,13 @@ namespace ND\tool\fh {
      * @param string $_url url du fichier source.
      * @return FALSE or string
      */
-    function get_local_file( $_url, $_exc_not_thrown= false){
+    function get_local_file( $_url, $_throwable= true){
         $content= @file_get_contents( $_url);
         if( false === $content){
-            if( ! $_exc_not_thrown){
+            if( $_throwable){
                 throw new e\non_sys_e( 'failed to get file: %s', [$_url_afi]);
+            } else {
+                // TODO logguer
             }
         }
         return $content;

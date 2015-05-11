@@ -1,24 +1,24 @@
 <?php
 namespace ND\core;
 
-//use ND\exception as e;
+use ND\Kernel;
+use ND\exception as e;
 
 class Services_registry {
 
-    const CORE_SERVICE_NAME__CONFIGURATOR= 'configurator';
-    const CORE_SERVICE_NAME__ROUTER= 'router';
-    const CORE_SERVICE_NAME__LOGGER= 'logger';
+    const CORE_SERVICE_NAME__CONFIGURATOR= 'core.configurator';
+    const CORE_SERVICE_NAME__ROUTER= 'core.router';
+    const CORE_SERVICE_NAME__LOGGER= 'core.logger';
 
     private static $_instance;
 
-    private $_core_service_names= [
+    private static $_core_service_names= [
         self::CORE_SERVICE_NAME__CONFIGURATOR,
         self::CORE_SERVICE_NAME__LOGGER,
         self::CORE_SERVICE_NAME__ROUTER,
     ];
 
-    private $_core_servicex;
-    private $_app_servicex;
+    private static $_servicex;
 
     private function __construct(){}
     private function __clone(){}
@@ -30,24 +30,23 @@ class Services_registry {
         return self::$_instance;
     }
 
-    public function add_service( $_name, $_instance){
-        if( isset( $this->_core_service_names[ $_name])){
-            $this->_core_servicex[ $_name]= $_instance;
-        } else {
-            $this->_app_servicex[ $_name]= $_instance;
+    public static function add_service( $_type, $_name, $_instance){
+        if( $_type == Kernel::ND_APP_PREFIX && isset( self::$_core_service_names[ $_name])){
+            throw new e\name_reserved_e( 'Name %s cannot be used for app service', [ $_name]);
         }
+        if( isset( self::$_servicex[ $_name])){
+            throw new e\duplicate_service_e( 'Service "%s" intented to be instancied and referenced two times', [ $_name]);
+        }
+        self::$_servicex[ $_name]= $_instance;
     }
 
-    public function get_service( $_name){
-        if( isset( $this->_core_service_names[ $_name])){
-            return @$this->_core_servicex[ $_name];
-        } else {
-            return @$this->_app_servicex[ $_name];
-        }
+    public static function get_service( $_name){
+        return @self::$_servicex[ $_name];
     }
 
-    public function has_service( $_name){
-        return isset( $this->_core_servicex[ $_name]) || isset( $this->_app_servicex[ $_name]);
+    public static function has_service( $_name){
+        return isset( self::$_servicex[ $_name]);
     }
+
 
 }

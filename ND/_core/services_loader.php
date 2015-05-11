@@ -1,6 +1,8 @@
 <?php
 namespace ND\core;
 
+use ND\Kernel;
+
 class Services_loader {
 
     /**
@@ -45,12 +47,12 @@ class Services_loader {
     private $_loading_finished;
 
     private $_service_pathx= [
-        'core'=> ND_PATH__FW_SERVICE,
-        'app'=> ND_PATH__APP_SERVICE,
+        Kernel::ND_CORE_PREFIX=> ND_PATH__FW_SERVICE,
+        Kernel::ND_APP_PREFIX=> ND_PATH__APP_SERVICE,
     ];
 
     private $_service_namespacex= [
-        'core'=> 'ND\\core\\service\\',
+        Kernel::ND_CORE_PREFIX=> 'ND\\core\\service\\',
     ];
 
     public function __construct(){}
@@ -61,11 +63,11 @@ class Services_loader {
      */
     public function change_phase( $_phase){
         $this->_phase= $_phase;
-        $configurator= Services_registry::get_instance()
-            ->get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
+        $configurator= Services_registry::get_service(
+            Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
         $this->_services_to_load= [
-            'core'=> $configurator->get_core_conf( 'services', [ $this->_phase]),
-            'app'=> $configurator->get_app_conf( 'services', [ $this->_phase]),
+            Kernel::ND_CORE_PREFIX=> $configurator->get_core_conf( 'services', [ $this->_phase]),
+            Kernel::ND_APP_PREFIX=> $configurator->get_app_conf( 'services', [ $this->_phase], true),
         ];
         $this->_loading_finished= false;
         do {
@@ -74,7 +76,8 @@ class Services_loader {
     }
 
     private function _load_services(){
-        if( empty( $this->_services_to_load[ 'core']) && empty( $this->_services_to_load[ 'app'])){
+        if( empty( $this->_services_to_load[ Kernel::ND_CORE_PREFIX])
+            && empty( $this->_services_to_load[ Kernel::ND_APP_PREFIX])){
             $this->_loading_finished= true;
         }
         $nb_of_services_loaded= 0;
@@ -95,8 +98,9 @@ class Services_loader {
     private function _try_to_load( $_type, $_name, $_paramx){
         $missing_deps= false;
         if( isset( $_paramx[ 'dependencies'])){
+            var_dump( $_paramx);
             foreach( $_paramx[ 'dependencies'] as $needed){
-                if( ! Services_registry::get_instance()->has_service( $needed)){
+                if( ! Services_registry::has_service( $needed)){
                     $missing_deps= true;
                     break;
                 }
@@ -115,7 +119,7 @@ class Services_loader {
         require_once $service_path;
         $service= new $service_class();
         ///
-        Services_registry::get_instance()->add_service( $_name, $service);
+        Services_registry::add_service( $_type, $_name, $service);
         return true;
     }
 

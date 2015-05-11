@@ -34,30 +34,32 @@ class Configurator {
         if( ! isset( $this->_app_confx[ $_name])){
             $this->_prepare_conf( $_name, 'app');
         }
-        return $this->_get_conf( 'core', $_name, $_keys, $_is_optional);
+        return $this->_get_conf( 'app', $_name, $_keys, $_is_optional);
     }
 
     public function get_core_conf( $_name, $_keys= null, $_is_optional= false){
         if( ! isset( $this->_core_confx[ $_name])){
             $this->_prepare_conf( $_name, 'core');
         }
-        return $this->_get_conf( 'app', $_name, $_keys, $_is_optional);
+        return $this->_get_conf( 'core', $_name, $_keys, $_is_optional);
     }
 
     private function _prepare_conf( $_name, $_type){
+        $path= $_type == 'core' ? ND_PATH__FW_CONF : ND_PATH__APP_CONF;
         switch( $this->get_init_conf( 'conf_filetype')){
             case 'yaml':
-                $conf_file= fh\get_local_file( ND_PATH__APP_CONF . $_name . '.yml');
-                $conf= util\parse_yaml_file( $conf_file);
+                $conf_file= fh\get_local_file( $path . $_name . '.yml', false);
+                $conf= $conf_file ? util\parse_yaml_file( $conf_file) : [];
                 break;
             case 'json':
-                $conf_file= fh\get_local_file( ND_PATH__APP_CONF . $_name . '.json');
-                $conf= json_decode( $conf_file, true);
+                $conf_file= fh\get_local_file( $path . $_name . '.json', false);
+                $conf= $conf_file ? json_decode( $conf_file, true) : [];
                 break;
             default:
-                $conf= null;
+                $conf= [];
                 break;
         }
+        var_dump( $conf);
         if( $_type == 'core'){
             $this->_core_confx[ $_name]= $conf;
         } else {
@@ -104,8 +106,9 @@ class Configurator {
             if( isset( $v)) break;
         }
         if( ! $v && ! $_is_optional){
+            var_dump( $_is_optional);
             $keyz= implode( ', ', $_keys);
-            throw new e\not_found_e( 'No conf entry found for [%s]', [$keyz]);
+            throw new e\not_found_e( 'No conf entry found for [%s]', [ $keyz]);
         }
         return $v;
     }

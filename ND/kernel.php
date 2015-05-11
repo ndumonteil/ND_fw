@@ -1,15 +1,20 @@
 <?php
-namespace ND\kernel;
+namespace ND;
 
 use ND\core;
 use ND\core\service;
+use ND\core\Services_registry;
 
 require_once ND_PATH__FW . '_init' . DIRECTORY_SEPARATOR . 'top_level.php';
 
+require_once ND_PATH__FW_CORE . 'services_registry.php';
 require_once ND_PATH__FW_CORE . 'services_loader.php';
 require_once ND_PATH__FW_SERVICE . 'configurator.php';
 
 class Kernel {
+
+    const ND_CORE_PREFIX= 'core';
+    const ND_APP_PREFIX= 'app';
 
     private static $_instance;
 
@@ -37,9 +42,7 @@ class Kernel {
         $this->_app_name= $_app_name;
         /// CONF
         $configurator= new service\Configurator( $_init_conf);
-        /* @var $registry core\Services_registry */
-        $registry= core\Services_registry::get_instance();
-        $registry->add_service( core\Services_registry::CORE_SERVICE_NAME__CONFIGURATOR, $configurator);
+        Services_registry::add_service( self::ND_CORE_PREFIX, Services_registry::CORE_SERVICE_NAME__CONFIGURATOR, $configurator);
         /// Service loader
         $this->_services_loader= new core\Services_loader();
         /// Begin Init phase
