@@ -1,6 +1,7 @@
 {
     "front": {
         "accueil": {
+            "verb": "GET",
             "url": "",
             "parameters":"",
             "controller": "accueil",

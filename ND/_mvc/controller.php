@@ -1,8 +1,15 @@
 <?php
-namespace ND\mvc\controller;
+namespace ND\mvc;
 
-class controller_base {
-    
-    
-    
+abstract class Controller {
+
+    private $_request;
+    private $_response;
+
+    public function __construct( $_request){
+        $this->_request= $_request;
+    }
+
+
+
 }
