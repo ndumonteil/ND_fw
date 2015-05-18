@@ -2,6 +2,7 @@
 namespace ND\core;
 
 use ND\Kernel;
+use ND\symbol;
 
 class Services_loader {
 
@@ -47,8 +48,8 @@ class Services_loader {
     private $_loading_finished;
 
     private $_service_pathx= [
-        Kernel::ND_CORE_PREFIX=> ND_PATH__FW_SERVICE,
-        Kernel::ND_APP_PREFIX=> ND_PATH__APP_SERVICE,
+        symbol::PREFIX_CORE=> ND_PATH__FW_SERVICE,
+        symbol::PREFIX_APP=> ND_PATH__APP_SERVICE,
     ];
 
     private $_service_namespacex= [
@@ -66,8 +67,8 @@ class Services_loader {
         $configurator= Services_registry::get_service(
             Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
         $this->_services_to_load= [
-            Kernel::ND_CORE_PREFIX=> $configurator->get_core_conf( 'services', [ $this->_phase]),
-            Kernel::ND_APP_PREFIX=> $configurator->get_app_conf( 'services', [ $this->_phase], true),
+            Kernel::ND_CORE_PREFIX=> $configurator->get_core_conf( service\Configurator::CONF_NAME__SERVICES, [ $this->_phase]),
+            Kernel::ND_APP_PREFIX=> $configurator->get_app_conf( service\Configurator::CONF_NAME__SERVICES, [ $this->_phase], true),
         ];
         $this->_loading_finished= false;
         do {

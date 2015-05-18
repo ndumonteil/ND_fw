@@ -1,9 +1,9 @@
 {
     "init": {
-        "logger": {
+        "core.logger": {
             "class": "Logger"
         },
-        "router": {
+        "core.router": {
             "class": "Router",
             "dependencies": [ "core.logger"]
         }

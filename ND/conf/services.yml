@@ -1,0 +1,9 @@
+init:
+    core.logger:
+        class: Logger
+    core.router:
+        class: Router
+        dependencies:
+            - core.logger
+pre_control:
+post_control:

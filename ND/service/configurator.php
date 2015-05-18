@@ -9,9 +9,10 @@ require_once ND_PATH__FW_TOOL . 'fh' . DIRECTORY_SEPARATOR . 'file.php';
 
 class Configurator {
 
-    const CONF_NAME__DATABASE= 'database';
+    const CONF_NAME__DATABASES= 'databases';
     const CONF_NAME__ROUTER= 'router';
     const CONF_NAME__LOGGER= 'logger';
+    const CONF_NAME__SERVICES= 'services';
 
     private $_init_conf= [ // default params surcharged by __construct
         'conf_filetype'=> 'yaml',
@@ -20,6 +21,7 @@ class Configurator {
     ];
     private $_app_confx; // container for app confs (lazy loaded)
     private $_core_confx; // container for core confs (lazy loaded)
+    private $_confx;
 
     public function __construct( $_init_conf){
         $this->_init_conf= array_merge( $this->_init_conf, $_init_conf);
@@ -44,6 +46,17 @@ class Configurator {
         return $this->_get_conf( 'core', $_name, $_keys, $_is_optional);
     }
 
+    public function get_conf(  $_name, $_keys= null, $_is_optional= false){
+         if( ! isset( $this->_core_confx[ $_name])){
+            $this->_prepare_conf( $_name, 'core');
+        }
+        return $this->_get_conf( 'core', $_name, $_keys, $_is_optional);
+
+
+
+
+    }
+
     private function _prepare_conf( $_name, $_type){
         $path= $_type == 'core' ? ND_PATH__FW_CONF : ND_PATH__APP_CONF;
         switch( $this->get_init_conf( 'conf_filetype')){
@@ -59,7 +72,6 @@ class Configurator {
                 $conf= [];
                 break;
         }
-        var_dump( $conf);
         if( $_type == 'core'){
             $this->_core_confx[ $_name]= $conf;
         } else {
@@ -101,12 +113,11 @@ class Configurator {
                 ? $this->_core_confx[ $_name]
                 : $this->_app_confx[ $_name];
         }
-        foreach( [ ND_ENV_NAME, 'prod', null] as $root_key){
+        foreach( [ null, ND_ENV_NAME, 'prod'] as $root_key){
             $v= $this->_get( $_type, $_name, $_keys, $root_key);
             if( isset( $v)) break;
         }
         if( ! $v && ! $_is_optional){
-            var_dump( $_is_optional);
             $keyz= implode( ', ', $_keys);
             throw new e\not_found_e( 'No conf entry found for [%s]', [ $keyz]);
         }
