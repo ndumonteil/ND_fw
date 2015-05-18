@@ -7,11 +7,11 @@ use ND\core\Services_registry as reg;
 use ND\symbol as sbl;
 
 require_once ND_PATH__FW . '_init' . DIRECTORY_SEPARATOR . 'top_level.php';
-
+/*
 require_once ND_PATH__FW_CORE . 'services_registry.php';
 require_once ND_PATH__FW_CORE . 'services_loader.php';
 require_once ND_PATH__FW_SERVICE . 'configurator.php';
-
+*/
 class Kernel {
 
     private static $_instance;
