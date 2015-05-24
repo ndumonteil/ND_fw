@@ -1,11 +1,24 @@
 {
     "front": {
         "accueil": {
-            "verb": "GET",
+            "verbs": [],
             "url": "",
-            "parameters":"",
+            "url_datax": [],
             "controller": "accueil",
-            "action": "show"
+            "action": "show",
+            "authentified": false,
+            "filterx":[]
+        },
+        "say_hello_to": {
+            "verbs": [],
+            "url": "hello/{name}",
+            "url_datax": {
+                "name": "{[a-ZA-Z]}"
+            },
+            "controller": "accueil",
+            "action": "show",
+            "authentified": false,
+            "filterx":[]
         }
     },
     "back": {

@@ -8,29 +8,27 @@ class Router {
     private $_request_URL;
 
     public function __construct( $_conf){
-        $this->_base_conf= $_conf;
+        $app_name= \ND\Kernel::get_instance()->get_app_name();
+        $this->_base_conf= array_merge( $_conf[ 'core'], $_conf[ $app_name]);
         $this->_url_conf= $this->_change_keys_with_url( $this->_base_conf);
+        $this->_request_URL= filter_input( INPUT_SERVER, 'SERVER_URI');
     }
 
-    public function set_URL( $_URL){
-        $this->_request_URL= $_URL;
+    public function get_controller_name( $_url= null){
+        $url= @$_url ?: $this->_request_URL;
+        return $this->_url_conf[ $url][ 'controller'];
     }
 
-    public function get_controller_name(){
-        $url_parameters= $this->_url_conf[ $this->_request_URL];
-        return $url_parameters[ 'controller'];
+    public function get_action_name( $_url= null){
+        $url= @$_url ?: $this->_request_URL;
+        return $this->_url_conf[ $url][ 'action'];
     }
 
-    public function get_action_name(){
-        $url_parameters= $this->_url_conf[ $this->_request_URL];
-        return $url_parameters[ 'action'];
+    public function get_url( $_name, $_argx){
+        $_url= $this->_base_conf[ $_name][ 'url'];
+        // TODO : parser l'url pour en ressortir les nom d'arguments
+        // remplacer les arguments par ceux fournis dans $_argx
     }
-
-    /*public function parse_request(){
-        var_dump( $this->_base_conf);
-        var_dump( $this->_url_conf);
-
-    }*/
 
     private function _change_keys_with_url( $_base_conf){
         $x= [];

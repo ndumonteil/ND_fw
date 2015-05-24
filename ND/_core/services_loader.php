@@ -1,8 +1,8 @@
 <?php
 namespace ND\core;
 
-use ND\Kernel;
 use ND\symbol;
+use ND\core\service;
 
 class Services_loader {
 
@@ -47,16 +47,12 @@ class Services_loader {
      */
     private $_loading_finished;
 
-    private $_service_pathx= [
-        symbol::PREFIX_CORE=> ND_PATH__FW_SERVICE,
-        symbol::PREFIX_APP=> ND_PATH__APP_SERVICE,
-    ];
+    private $_service_namespacex= [ 'ND\\core\\service\\'];
 
-    private $_service_namespacex= [
-        Kernel::ND_CORE_PREFIX=> 'ND\\core\\service\\',
-    ];
-
-    public function __construct(){}
+    public function __construct(){
+        $configurator= Services_registry::get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
+        $this->_service_namespacex[]= $configurator->get_init_conf( 'app_service_namespace');
+    }
 
     /**
      * Permet d'ajouter des phases durant l'éxecution du contrôleur
@@ -64,31 +60,25 @@ class Services_loader {
      */
     public function change_phase( $_phase){
         $this->_phase= $_phase;
-        $configurator= Services_registry::get_service(
-            Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
-        $this->_services_to_load= [
-            Kernel::ND_CORE_PREFIX=> $configurator->get_core_conf( service\Configurator::CONF_NAME__SERVICES, [ $this->_phase]),
-            Kernel::ND_APP_PREFIX=> $configurator->get_app_conf( service\Configurator::CONF_NAME__SERVICES, [ $this->_phase], true),
-        ];
-        $this->_loading_finished= false;
-        do {
-            $this->_load_services();
-        } while( ! $this->_loading_finished);
+        $configurator= Services_registry::get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
+        $this->_services_to_load= $configurator->get( service\Configurator::CONF_NAME__SERVICES, [ $this->_phase]);
+        $this->_loading_finished= empty( $this->_services_to_load);
+        while( ! $this->_loading_finished){
+            $this->_load_services( $configurator);
+        }
     }
 
-    private function _load_services(){
-        if( empty( $this->_services_to_load[ Kernel::ND_CORE_PREFIX])
-            && empty( $this->_services_to_load[ Kernel::ND_APP_PREFIX])){
+    private function _load_services( $_configurator){
+        if( empty( $this->_services_to_load)){
             $this->_loading_finished= true;
         }
         $nb_of_services_loaded= 0;
-        foreach( $this->_services_to_load as $type=> $servicex){
-            foreach( $servicex as $name=> $paramx){
-                $loaded= $this->_try_to_load( $type, $name, $paramx);
-                if( $loaded){
-                    unset( $this->_services_to_load[ $type][ $name]);
-                    $nb_of_services_loaded++;
-                }
+        foreach( $this->_services_to_load as $name=> $paramx){
+            $confx= isset( $paramx[ 'conf']) ? $_configurator->get( $paramx[ 'conf']) : null;
+            $loaded= $this->_try_to_load( $name, $paramx, $confx);
+            if( $loaded){
+                unset( $this->_services_to_load[ $name]);
+                $nb_of_services_loaded++;
             }
         }
         if( ! $nb_of_services_loaded){
@@ -96,10 +86,9 @@ class Services_loader {
         }
     }
 
-    private function _try_to_load( $_type, $_name, $_paramx){
+    private function _try_to_load( $_name, $_paramx, $_confx= null){
         $missing_deps= false;
         if( isset( $_paramx[ 'dependencies'])){
-            var_dump( $_paramx);
             foreach( $_paramx[ 'dependencies'] as $needed){
                 if( ! Services_registry::has_service( $needed)){
                     $missing_deps= true;
@@ -109,18 +98,14 @@ class Services_loader {
         }
         if( $missing_deps) return false;
         /// Instanciation
-        $service_class=
-            $this->_service_namespacex[ $_type]
-            . ( @$_paramx[ 'class'] ?: ucfirst( $_name));
-        $service_file= @$_paramx[ 'file'] ?: $_name . '.php';
-        $service_path=
-            $this->_service_pathx[ $_type]
-            . DIRECTORY_SEPARATOR
-            . $service_file;
-        require_once $service_path;
-        $service= new $service_class();
+        $class= @$_paramx[ 'class'] ?: ucfirst( $_name);
+        $service_class= $this->_service_namespacex[0] . $class;
+        if( ! class_exists( $service_class)){
+            $service_class= $this->_service_namespacex[1] . $class;
+        }
+        $service= new $service_class( $_confx);
         ///
-        Services_registry::add_service( $_type, $_name, $service);
+        Services_registry::add_service( $_name, $service);
         return true;
     }
 

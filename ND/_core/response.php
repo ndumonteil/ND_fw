@@ -1,6 +1,6 @@
 <?php
 namespace ND\core;
 
-class Request {
+class Response {
 
 }

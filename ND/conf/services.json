@@ -1,10 +1,12 @@
 {
     "init": {
         "core.logger": {
-            "class": "Logger"
+            "class": "Logger",
+            "conf": "logger"
         },
         "core.router": {
             "class": "Router",
+            "conf": "router",
             "dependencies": [ "core.logger"]
         }
     },

@@ -4,6 +4,7 @@ if( ! defined( 'ND_PATH__ROOT')){ define( 'ND_PATH__ROOT', dirname(__DIR__) . DI
 if( ! defined( 'ND_PATH__FW')){ define( 'ND_PATH__FW', ND_PATH__ROOT . 'ND' .DIRECTORY_SEPARATOR);}
 */
 // Framework
+if( ! defined( 'ND_PATH__FW_INIT')){ define( 'ND_PATH__FW_INIT', ND_PATH__FW . '_init' . DIRECTORY_SEPARATOR);}
 if( ! defined( 'ND_PATH__FW_CORE')){ define( 'ND_PATH__FW_CORE', ND_PATH__FW . '_core' . DIRECTORY_SEPARATOR);}
 if( ! defined( 'ND_PATH__FW_CONF')){ define( 'ND_PATH__FW_CONF', ND_PATH__FW . 'conf' . DIRECTORY_SEPARATOR);}
 if( ! defined( 'ND_PATH__FW_MVC')){ define( 'ND_PATH__FW_MVC', ND_PATH__FW . '_mvc' . DIRECTORY_SEPARATOR);}
