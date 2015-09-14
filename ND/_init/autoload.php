@@ -1,5 +1,5 @@
 <?php
-class NDAutoloader {
+final class NDAutoloader {
 
     private $_dir2ns_x= [
         ND_PATH__FW_CORE=> [ 'ND', 'core'],

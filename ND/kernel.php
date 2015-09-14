@@ -4,11 +4,10 @@ namespace ND;
 use ND\core;
 use ND\core\service;
 use ND\core\Services_registry as reg;
-use ND\symbol;
 
 require_once ND_PATH__FW . '_init' . DIRECTORY_SEPARATOR . 'top_level.php';
 
-class Kernel {
+final class Kernel {
 
     private static $_instance;
 
@@ -18,10 +17,14 @@ class Kernel {
     private $_controller_name;
     private $_action_name;
 
-    private $_request;
-    private $_response;
+    private static $_request;
+    private static $_response;
 
-    private function __construct(){}
+    private function __construct(){
+        self::$_request= core\Request::get_instance();
+        self::$_response= core\Response::get_instance();
+    }
+
     private function __clone(){}
 
     public static function get_instance(){
@@ -31,38 +34,13 @@ class Kernel {
         return self::$_instance;
     }
 
-    public function init( $_init_conf, $_app_name){
+    public function run( $_app_name, $_init_conf= []){
         $this->_app_name= $_app_name;
-        reg::add_service(
-            reg::CORE_SERVICE_NAME__CONFIGURATOR,
-            new service\Configurator( $_init_conf)
-        );
-        $this->_services_loader= new core\Services_loader( $_app_name);
-        ///
-        // INIT PHASE
-        ///
-        $this->_services_loader->change_phase( core\Services_loader::EVENT_INIT);
-    }
-
-    public function run(){
-        $configurator= reg::get_service( reg::CORE_SERVICE_NAME__CONFIGURATOR);
-        $namespace= $configurator->get_init_conf( 'app_controller_namespace');
-        $router= reg::get_service( reg::CORE_SERVICE_NAME__ROUTER);
-        $this->_controller_name= $router->get_controller_name();
-        $this->_action_name= $router->get_action_name();
-        $this->_request= new core\Request();
-        $controller_class= $namespace . ucfirst( $this->_controller_name);
-        ///
-        // PRE CONTROL PHASE
-        ///
-        $this->_services_loader->change_phase( core\Services_loader::EVENT_PRE_CONTROL);
-        $action= $this->_action_name;
-        $this->_response= ( new $controller_class( $this->_request))->$action();
-        ///
-        // POST CONTROL PHASE
-        ///
-        $this->_services_loader->change_phase( core\Services_loader::EVENT_POST_CONTROL);
-        echo $this->_response;
+        $this->_init( $_init_conf);
+        $this->_pre_control();
+        $this->_control();
+        $this->_post_control();
+        echo self::$_response->get_content();
     }
 
     public function get_app_name(){
@@ -83,6 +61,46 @@ class Kernel {
 
     public function set_controller_name( $_controller_name){
         $this->_controller_name= $_controller_name;
+    }
+
+    private function _init( $_init_conf){
+        reg::add_service(
+            reg::CORE_SERVICE_NAME__CONFIGURATOR,
+            new service\Configurator( $_init_conf)
+        );
+        $this->_services_loader= new core\Services_loader( $this->_app_name);
+        //------------//
+        // INIT PHASE //
+        //------------//
+        $this->_services_loader->change_phase( core\Services_loader::EVENT_INIT);
+    }
+
+    private function _pre_control(){
+        $router= reg::get_service( reg::CORE_SERVICE_NAME__ROUTER);
+        $router->analyze_url( self::$_request);
+        $this->_controller_name= $router->get_controller_name();
+        $this->_action_name= $router->get_action_name();
+        //-------------------//
+        // PRE CONTROL PHASE //
+        //-------------------//
+        $this->_services_loader->change_phase( core\Services_loader::EVENT_PRE_CONTROL);
+    }
+
+    private function _control(){
+        $namespace= reg::get_service( reg::CORE_SERVICE_NAME__CONFIGURATOR)
+            ->get_init_conf( 'app_controller_namespace');
+        $controller_class= $namespace . ucfirst( $this->_controller_name);
+        $action= $this->_action_name;
+        self::$_response->set_content(
+            (new $controller_class( self::$_request))->$action()
+        );
+    }
+
+    private function _post_control(){
+        //--------------------//
+        // POST CONTROL PHASE //
+        //--------------------//
+        $this->_services_loader->change_phase( core\Services_loader::EVENT_POST_CONTROL);
     }
 
 }

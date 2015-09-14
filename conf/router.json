@@ -3,22 +3,33 @@
         "accueil": {
             "verbs": [],
             "url": "",
-            "url_datax": [],
+            "url_argx": [],
             "controller": "accueil",
             "action": "show",
             "authentified": false,
-            "filterx":[]
+            "input_filterx":[]
         },
         "say_hello_to": {
             "verbs": [],
-            "url": "hello/{name}",
-            "url_datax": {
-                "name": "{[a-ZA-Z]}"
+            "url": "/hello/{name}",
+            "url_argx": {
+
             },
             "controller": "accueil",
-            "action": "show",
+            "action": "show_me",
             "authentified": false,
-            "filterx":[]
+            "input_filterx":[]
+        },
+        "say_hello_together": {
+            "verbs": [],
+            "url": "hello/{name}/iam/{name2}",
+            "url_argx": {
+
+            },
+            "controller": "accueil",
+            "action": "show_us",
+            "authentified": false,
+            "input_filterx":[]
         }
     },
     "back": {

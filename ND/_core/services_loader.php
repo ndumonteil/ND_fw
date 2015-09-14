@@ -4,7 +4,7 @@ namespace ND\core;
 use ND\symbol;
 use ND\core\service;
 
-class Services_loader {
+final class Services_loader {
 
     /**
      * Initialisation of framework

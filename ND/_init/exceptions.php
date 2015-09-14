@@ -4,7 +4,7 @@ namespace ND\exception;
 use Exception;
 
 class all_e extends Exception {
-    private $_abusive_excs= ['ND\exception\not_found_e', 'ND\exception\duplicate_entry']; // these exc are often abusive & too freq to show the stack each time they occur
+    protected $_abusive_excs= []; // these exc are often abusive & too freq to show the stack each time they occur
 
     public function __construct( $_msg= 'failed', array $_sprintf_params= [], Exception $_e= null){
         $s= [];
@@ -19,7 +19,7 @@ class all_e extends Exception {
         parent::__construct( $msg, 0, $_e);
         //error_log( $this);
     }
-
+/*
     public function __toString(){
         $e= $this;
         $msg= sprintf(
@@ -31,7 +31,8 @@ class all_e extends Exception {
         );
         return $msg;
     }
-
+*/
+    /*
     private function build_formatted_trace( $_ts, $_cr = PHP_EOL, $_popped = null){
         $trace= 'Stack:';
         $ts= array_reverse( $_ts);
@@ -52,7 +53,7 @@ class all_e extends Exception {
         }
         return $trace;
     }
-
+*/
 }
 
 /**
@@ -79,6 +80,7 @@ class non_sys_e extends runtime_e {}
  * Thrown during code execution : entry not found
  **/
 class not_found_e extends non_sys_e {}
+
 class duplicate_entry extends non_sys_e {}
 
 /**
@@ -100,6 +102,8 @@ class duplicate_service_e extends non_runtime_e {}
  * Thrown if arg is invalid.
  **/
 class bad_arg_e extends non_runtime_e {}
+
+class bad_method_usage_e extends non_runtime_e {}
 
 /**
  * Thrown if some arg is missing (arg passed but holding NULL eg)

@@ -14,8 +14,8 @@ abstract class Dro {
     }
 
     public function set( $_key, $_val){
-
+        $this->$_key= $_val;
     }
 
-
+    
 }
