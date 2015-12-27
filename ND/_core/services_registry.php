@@ -5,9 +5,9 @@ use ND\exception as e;
 
 final class Services_registry {
 
-    const CORE_SERVICE_NAME__CONFIGURATOR= 'core.configurator';
-    const CORE_SERVICE_NAME__ROUTER= 'core.router';
-    const CORE_SERVICE_NAME__LOGGER= 'core.logger';
+    const CORE_SERVICE_NAME__CONFIGURATOR= '_core.configurator';
+    const CORE_SERVICE_NAME__ROUTER= '_core.router';
+    const CORE_SERVICE_NAME__LOGGER= '_core.logger';
 
     private static $_servicex;
 

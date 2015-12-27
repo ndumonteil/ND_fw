@@ -1,0 +1,10 @@
+{
+    "_init": {},
+    "_pre_control": {
+        "ND.authentificator": {
+            "class": "Authentificator",
+            "conf": "auth"
+        }
+    },
+    "_post_control": {}
+}

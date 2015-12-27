@@ -11,7 +11,7 @@ class Router {
 
     public function __construct( $_conf){
         $app_name= \ND\Kernel::get_instance()->get_app_name();
-        $this->_confx= array_merge( $_conf[ 'core'], $_conf[ $app_name]);
+        $this->_confx= array_merge( $_conf[ '_core'], $_conf[ $app_name]);
     }
 
     public function analyze_url( $_request){
@@ -22,17 +22,33 @@ class Router {
         }
     }
 
+    /**
+     * @param string $_url_name Optionnel. Defaut : url_name correspondant à la requête actuelle.
+     * @return string Nom du contrôleur
+     */
     public function get_controller_name( $_url_name= null){
         $url_name= @$_url_name ?: $this->_requested_url_name;
         return $this->_confx[ $url_name][ 'controller'];
     }
 
+    /**
+     * @param string $_url_name (optionnel) Defaut : url_name correspondant à la requête actuelle.
+     * @return string Nom de la méthode exécutée dans le contrôleur
+     */
     public function get_action_name( $_url_name= null){
         $url_name= @$_url_name ?: $this->_requested_url_name;
         return $this->_confx[ $url_name][ 'action'];
     }
 
-    public function make_url( $_name, $_argx){
+    /**
+     * Crée une URL
+     * @param string $_name Nom de l'URL référencée dans la conf router
+     * @param array $_argx Arguments de l'URL (optionnel)
+     * @return string URL
+     * @throws e\missing_arg_e
+     * @throws e\bad_arg_e
+     */
+    public function make_url( $_name, $_argx= []){
         $url= $this->_sanitize_extremities( $this->_confx[ $_name][ 'url']);
         $datax= @$this->_confx[ $_name][ 'url_argx'];
         preg_match_all( '#\{\w+\}#', $url, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
@@ -50,6 +66,11 @@ class Router {
         return $url;
     }
 
+    /**
+     * Effectue une redirection
+     * @param string $_url_name Nom de l'URL référencée dans la conf router
+     * @param array $_argx Arguments de l'URL (optionnel)
+     */
     public function redirect( $_url_name, $_argx= []){
         $url= $this->make_url( $_url_name, $_argx);
         header( 'Location: ' . $url);

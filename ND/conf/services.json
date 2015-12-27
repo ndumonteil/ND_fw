@@ -1,15 +1,15 @@
 {
-    "init": {
-        "core.logger": {
+    "_init": {
+        "_core.logger": {
             "class": "Logger",
             "conf": "logger"
         },
-        "core.router": {
+        "_core.router": {
             "class": "Router",
             "conf": "router",
-            "dependencies": [ "core.logger"]
+            "dependencies": [ "_core.logger"]
         }
     },
-    "pre_control": {},
-    "post_control": {}
+    "_pre_control": {},
+    "_post_control": {}
 }

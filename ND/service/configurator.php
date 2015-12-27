@@ -5,8 +5,6 @@ use ND\exception as e;
 use ND\core\tool\fh;
 use ND\core\tool\util;
 
-require_once ND_PATH__FW_TOOL . 'fh' . DIRECTORY_SEPARATOR . 'file.php';
-
 class Configurator {
 
     const CONF_NAME__DATABASES= 'databases';

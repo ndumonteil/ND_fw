@@ -1,34 +1,43 @@
 {
     "front": {
+        "login": {
+            "verbs": [],
+            "url": "",
+            "url_argx": {},
+            "controller": "accueil",
+            "action": "show",
+            "input_filterx":[]            
+        },
+        "logout": {
+            "verbs": [],
+            "url": "",
+            "url_argx": {},
+            "controller": "accueil",
+            "action": "show",
+            "input_filterx":[]            
+        },
         "accueil": {
             "verbs": [],
             "url": "",
-            "url_argx": [],
+            "url_argx": {},
             "controller": "accueil",
             "action": "show",
-            "authentified": false,
             "input_filterx":[]
         },
         "say_hello_to": {
             "verbs": [],
             "url": "/hello/{name}",
-            "url_argx": {
-
-            },
+            "url_argx": {},
             "controller": "accueil",
             "action": "show_me",
-            "authentified": false,
             "input_filterx":[]
         },
         "say_hello_together": {
             "verbs": [],
             "url": "hello/{name}/iam/{name2}",
-            "url_argx": {
-
-            },
+            "url_argx": {},
             "controller": "accueil",
             "action": "show_us",
-            "authentified": false,
             "input_filterx":[]
         }
     },
