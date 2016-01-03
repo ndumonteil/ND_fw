@@ -1,13 +1,7 @@
 <?php
-namespace o\yo\entities;
-use o\ctx;
-use o\dbals\al;
+namespace ND\MVC;
 
-require_once YO_ROOT_ADI . 'entities/entity_base.php';
-require_once CTX_ROOT_ADI . 'apis/contexts.php';
-require_once YO_ROOT_ADI . 'inits/al.init.php';
-
-abstract class mysql_entity_base extends entity_base{
+abstract class MySQL_entity extends Entity_base{
 
     protected $_table_name;
 

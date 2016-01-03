@@ -1,9 +1,9 @@
 <?php
-namespace ND\core\tool;
+namespace ND\tool;
 
 use ND\exceptions as e;
 
-class util {
+class Util {
 
     public static function parse_yaml_file( $_afi)
     {

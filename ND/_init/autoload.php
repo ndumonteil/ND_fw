@@ -2,14 +2,14 @@
 final class NDAutoloader {
 
     private $_dir2ns_x= [
-        ND_PATH__FW_CORE=> [ 'ND', '_core'],
-        ND_PATH__FW_MVC=> [ 'ND', '_mvc'],
+        ND_PATH__FW_CORE=> [ 'ND', 'core'],
+        ND_PATH__FW_MVC=> [ 'ND', 'MVC'],
         ND_PATH__FW_SERVICE=> [ 'ND', 'service'],
         ND_PATH__FW_TOOL=> [ 'ND', 'tool'],
         ND_PATH__APP=> [ 'app', 'controller'],
         ND_PATH__APP_SERVICE=> [ 'app', 'service'],
-        ND_PATH__APP_MODEL_DRO=> [ 'app', 'model', 'dro'],
-        ND_PATH__APP_MODEL_REPO=> [ 'app', 'model', 'repo'],
+        ND_PATH__APP_MDO=> [ 'app', 'model', 'MDO'],
+        ND_PATH__APP_ENTITY=> [ 'app', 'model', 'entity'],
         ND_PATH__APP_TOOL=> [ 'app', 'tool'],
     ];
 

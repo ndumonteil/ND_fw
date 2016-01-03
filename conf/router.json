@@ -39,6 +39,24 @@
             "controller": "accueil",
             "action": "show_us",
             "input_filterx":[]
+        },
+        "user_list_show": {
+            "verbs": [],
+            "url": "invites",
+            "url_argx": {},
+            "controller": "user",
+            "action": "show_all",
+            "input_filterx":[]
+        },
+        "user_show": {
+            "verbs": [],
+            "url": "invites/voir/{user_id}",
+            "url_argx": {
+                "user_id": "[0-9]{1,3}"
+            },
+            "controller": "user",
+            "action": "show_one",
+            "input_filterx":[]
         }
     },
     "back": {

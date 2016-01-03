@@ -2,7 +2,7 @@
 namespace ND\core;
 
 use ND\symbol;
-use ND\core\service;
+use ND\service;
 
 final class Services_loader {
 
@@ -47,7 +47,7 @@ final class Services_loader {
      */
     private $_loading_finished;
 
-    private $_service_namespacex= [ 'ND\\core\\service\\'];
+    private $_service_namespacex= [ 'ND\\service\\'];
 
     public function __construct(){
         $configurator= Services_registry::get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);

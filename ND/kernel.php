@@ -2,7 +2,7 @@
 namespace ND;
 
 use ND\core;
-use ND\core\service;
+use ND\service;
 use ND\core\Services_registry as reg;
 
 require_once ND_PATH__FW . '_init' . DIRECTORY_SEPARATOR . 'top_level.php';
