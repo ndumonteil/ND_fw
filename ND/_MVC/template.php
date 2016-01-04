@@ -1,5 +1,5 @@
 <?php
-namespace ND\mvc;
+namespace ND\MVC;
 
 class Template {
 

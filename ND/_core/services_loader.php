@@ -2,7 +2,7 @@
 namespace ND\core;
 
 use ND\symbol;
-use ND\core\service;
+use ND\service;
 
 final class Services_loader {
 
@@ -11,7 +11,7 @@ final class Services_loader {
      * Begin : kernel init()
      * End : kernel run()
      */
-    const EVENT_INIT= 'init';
+    const EVENT_INIT= '_init';
 
     /**
      * Before request processing
@@ -19,7 +19,7 @@ final class Services_loader {
      * => after initializing router : services loaded here can re-route the request)
      * End : instanciation of controller in kernel run()
      */
-    const EVENT_PRE_CONTROL= 'pre_control';
+    const EVENT_PRE_CONTROL= '_pre_control';
 
     /**
      * Before returning response
@@ -27,7 +27,7 @@ final class Services_loader {
      * => after
      * End : return controller response by kernel
      */
-    const EVENT_POST_CONTROL= 'post_control';
+    const EVENT_POST_CONTROL= '_post_control';
 
     /**
      * Actual phase
@@ -47,7 +47,7 @@ final class Services_loader {
      */
     private $_finished_load;
 
-    private $_service_namespacex= [ 'ND\\core\\service\\'];
+    private $_service_namespacex= [ 'ND\\service\\'];
 
     public function __construct(){
         $configurator= Services_registry::get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);

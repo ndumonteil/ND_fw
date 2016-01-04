@@ -1,10 +1,9 @@
 <?php
-namespace ND\core\tool;
+namespace ND\tool;
 
 use ND\exceptions as e;
 
-class fh {
-
+class File {
     /**
      * Récupère la liste des fichiers disponibles à partir de l'url locale $_url_adi.
      * @throws e\non_sys_e levée si le répertoire n'est pas lisible

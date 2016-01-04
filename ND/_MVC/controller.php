@@ -1,5 +1,5 @@
 <?php
-namespace ND\mvc;
+namespace ND\MVC;
 
 abstract class Controller {
 

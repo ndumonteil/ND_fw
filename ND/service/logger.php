@@ -1,5 +1,5 @@
 <?php
-namespace ND\core\service;
+namespace ND\service;
 
 class Logger {
 

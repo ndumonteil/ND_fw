@@ -1,7 +1,10 @@
 <?php
-namespace ND\mvc;
+namespace ND\MVC;
 
-abstract class Dro {
+/**
+ * Memory Data Object
+ */
+abstract class MDO {
 
     protected $_cols;
 

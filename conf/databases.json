@@ -1,10 +1,18 @@
 {
-    "dev": {
-        "user": "",
-        "pwd": ""
-    },
     "prod": {
-        "user": "",
-        "pwd": ""
+        "aen": {
+            "host": "",
+            "db_name": "",
+            "user": "",
+            "pwd": ""            
+        }
+    },
+    "dev": {
+        "aen": {
+            "host": "127.0.0.1",
+            "db_name": "aen",
+            "user": "root",
+            "pwd": "root"            
+        }
     }
 }

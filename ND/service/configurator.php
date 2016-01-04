@@ -1,11 +1,8 @@
 <?php
-namespace ND\core\service;
+namespace ND\service;
 
 use ND\exception as e;
-use ND\core\tool\fh;
-use ND\core\tool\util;
-
-require_once ND_PATH__FW_TOOL . 'fh' . DIRECTORY_SEPARATOR . 'file.php';
+use ND\tool;
 
 class Configurator {
 
@@ -39,12 +36,12 @@ class Configurator {
 
     private function _prepare_conf( $_name){
         $filetype= $this->get_init_conf( 'conf_filetype');
-        $core_conf_file= fh::get_local_file( ND_PATH__FW_CONF . $_name . '.' . $filetype, false);
-        $app_conf_file= fh::get_local_file( ND_PATH__APP_CONF . $_name . '.' . $filetype, false);
+        $core_conf_file= tool\File::get_local_file( ND_PATH__FW_CONF . $_name . '.' . $filetype, false);
+        $app_conf_file= tool\File::get_local_file( ND_PATH__APP_CONF . $_name . '.' . $filetype, false);
         switch( $filetype){
             case 'yaml':
-                $core_conf= $core_conf_file ? util::parse_yaml_file( $core_conf_file) : [];
-                $app_conf= $app_conf_file ? util::parse_yaml_file( $app_conf_file) : [];
+                $core_conf= $core_conf_file ? tool\Util::parse_yaml_file( $core_conf_file) : [];
+                $app_conf= $app_conf_file ? tool\Util::parse_yaml_file( $app_conf_file) : [];
                 break;
             case 'json':
                 $core_conf= $core_conf_file ? json_decode( $core_conf_file, true) : [];
