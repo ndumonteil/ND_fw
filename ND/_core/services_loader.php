@@ -45,7 +45,7 @@ final class Services_loader {
      * Flag to stop loop services loading
      * @var type
      */
-    private $_loading_finished;
+    private $_finished_load;
 
     private $_service_namespacex= [ 'ND\\core\\service\\'];
 
@@ -62,15 +62,15 @@ final class Services_loader {
         $this->_phase= $_phase;
         $configurator= Services_registry::get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
         $this->_services_to_load= $configurator->get( service\Configurator::CONF_NAME__SERVICES, [ $this->_phase]);
-        $this->_loading_finished= empty( $this->_services_to_load);
-        while( ! $this->_loading_finished){
+        $this->_finished_load= empty( $this->_services_to_load);
+        while( ! $this->_finished_load){
             $this->_load_services( $configurator);
         }
     }
 
     private function _load_services( $_configurator){
         if( empty( $this->_services_to_load)){
-            $this->_loading_finished= true;
+            $this->_finished_load= true;
         }
         $nb_of_services_loaded= 0;
         foreach( $this->_services_to_load as $name=> $paramx){
@@ -82,7 +82,7 @@ final class Services_loader {
             }
         }
         if( ! $nb_of_services_loaded){
-            $this->_loading_finished= true;
+            $this->_finished_load= true;
         }
     }
 
