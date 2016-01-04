@@ -1,7 +1,7 @@
 <?php
 namespace ND\MVC;
 
-interface Repo {
+interface Entity{
 /*
     selon les arguments :
     arg1 : $_where
@@ -17,5 +17,5 @@ interface Repo {
     public function delete_by_pk();
 
     public function delete_by_MDO();
-    
+
 }
