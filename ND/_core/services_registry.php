@@ -5,7 +5,7 @@ use ND\exception as e;
 
 final class Services_registry {
 
-    const CORE_SERVICE_NAME__CONFIGURATOR= '_core.configurator';
+    const CORE_SERVICE_NAME__CONFIGURATION= '_core.configuration';
     const CORE_SERVICE_NAME__ROUTER= '_core.router';
     const CORE_SERVICE_NAME__LOGGER= '_core.logger';
 
@@ -16,7 +16,7 @@ final class Services_registry {
 
     public static function add_service( $_name, $_instance){
         if( isset( self::$_servicex[ $_name])){
-            throw new e\duplicate_service_e( 'The service "%s" has been instantiated and referenced 2 times', [ $_name]);
+            throw new e\service_loading_e( 'The service "%s" has been instantiated and referenced 2 times', [ $_name]);
         }
         self::$_servicex[ $_name]= $_instance;
     }

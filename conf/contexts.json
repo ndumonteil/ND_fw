@@ -1,18 +1,20 @@
 {
     "prod": {
         "aen": {
+            "type": "mysql",
             "host": "",
             "db_name": "",
             "user": "",
-            "pwd": ""            
+            "pwd": ""
         }
     },
     "dev": {
         "aen": {
+            "type": "mysql",
             "host": "127.0.0.1",
             "db_name": "aen",
             "user": "root",
-            "pwd": "root"            
+            "pwd": "root"
         }
     }
 }

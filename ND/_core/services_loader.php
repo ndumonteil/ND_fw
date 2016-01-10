@@ -1,8 +1,7 @@
 <?php
 namespace ND\core;
 
-use ND\symbol;
-use ND\service;
+use ND\core\Services_registry as SR;
 
 final class Services_loader {
 
@@ -50,8 +49,8 @@ final class Services_loader {
     private $_service_namespacex= [ 'ND\\service\\'];
 
     public function __construct(){
-        $configurator= Services_registry::get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
-        $this->_service_namespacex[]= $configurator->get_init_conf( 'app_service_namespace');
+        $this->_service_namespacex[]= SR::get_service( SR::CORE_SERVICE_NAME__CONFIGURATION)
+                ->get_init_conf( 'app_service_namespace');
     }
 
     /**
@@ -60,53 +59,50 @@ final class Services_loader {
      */
     public function change_phase( $_phase){
         $this->_phase= $_phase;
-        $configurator= Services_registry::get_service( Services_registry::CORE_SERVICE_NAME__CONFIGURATOR);
-        $this->_services_to_load= $configurator->get( service\Configurator::CONF_NAME__SERVICES, [ $this->_phase]);
+        $this->_services_to_load= SR::get_service( SR::CORE_SERVICE_NAME__CONFIGURATION)
+                ->get( \ND\service\Configuration::CONF_NAME__SERVICES, [ $this->_phase]);
         $this->_loading_finished= empty( $this->_services_to_load);
         while( ! $this->_loading_finished){
-            $this->_load_services( $configurator);
+            $this->_load_services();
+        }
+        if( count( $this->_services_to_load)){
+            throw new \ND\exception\service_loading_e( 'Services can\'t be loaded because of their dependencies', $this->_services_to_load);
         }
     }
 
-    private function _load_services( $_configurator){
-        if( empty( $this->_services_to_load)){
-            $this->_loading_finished= true;
-        }
-        $nb_of_services_loaded= 0;
+    private function _load_services(){
+        $nb_loaded= 0;
         foreach( $this->_services_to_load as $name=> $paramx){
-            $confx= isset( $paramx[ 'conf']) ? $_configurator->get( $paramx[ 'conf']) : null;
-            $loaded= $this->_try_to_load( $name, $paramx, $confx);
-            if( $loaded){
+            $confx= isset( $paramx[ 'conf']) ? SR::get_service( SR::CORE_SERVICE_NAME__CONFIGURATION)->get( $paramx[ 'conf']) : null;
+            $deps= @$paramx[ 'dependencies'] ?: [];
+            if( $this->_check_dependencies( $deps)){
+                $class= @$paramx[ 'class'];
+                SR::add_service( $name, $this->_load( $name, $class, $confx));
                 unset( $this->_services_to_load[ $name]);
-                $nb_of_services_loaded++;
+                $nb_loaded++;
             }
         }
-        if( ! $nb_of_services_loaded){
+        if( ! $nb_loaded){
             $this->_loading_finished= true;
         }
     }
 
-    private function _try_to_load( $_name, $_paramx, $_confx= null){
-        $missing_deps= false;
-        if( isset( $_paramx[ 'dependencies'])){
-            foreach( $_paramx[ 'dependencies'] as $needed){
-                if( ! Services_registry::has_service( $needed)){
-                    $missing_deps= true;
-                    break;
-                }
+    private function _check_dependencies( $deps){
+        foreach( $deps as $needed){
+            if( ! SR::has_service( $needed)){
+                return false;
             }
         }
-        if( $missing_deps) return false;
-        /// Instanciation
-        $class= @$_paramx[ 'class'] ?: ucfirst( $_name);
+        return true;
+    }
+    
+    private function _load( $_name, $_class= null, $_confx= null){
+        $class= $_class ?: ucfirst( $_name);
         $service_class= $this->_service_namespacex[0] . $class;
         if( ! class_exists( $service_class)){
             $service_class= $this->_service_namespacex[1] . $class;
         }
-        $service= new $service_class( $_confx);
-        ///
-        Services_registry::add_service( $_name, $service);
-        return true;
+        return new $service_class( $_confx);
     }
 
 }

@@ -1,18 +1,19 @@
 <?php
 namespace ND\MVC;
 
-abstract class MySQL_entity extends Entity_base{
+abstract class MySQL_entity extends \ND\core\PDO\Entity_base {
 
     protected $_table_name;
 
-    /** @var al\conns */
     protected $_conns_o;
 
-    public function __construct( $_ctx_code, $_table_name, al\conns $_al_conns_o = null){
-        parent::__construct();
+    public function __construct( $_ctx_code, $_table_name){
+
+        // test si conf ctx donne un type mysql
+        // => si non throw error "ne peut pas utiliser instance de Mysql_entity dans un context autre que mysql
+
+        parent::__construct( $_ctx_code, 'mysql');
         $this->_table_name= $_table_name;
-        ctx\contexts::get_instance()->activate_context($_ctx_code);
-        $this->_conns_o= $_al_conns_o?:new al\conns($_ctx_code);
     }
 
     /**
@@ -26,6 +27,10 @@ abstract class MySQL_entity extends Entity_base{
      */
     public function fetch( array $_x, array $_cols= [], array $_order_x= [], $_limit= null, $_offset= 0){
         return $this->_fetch( $_x, $_cols, $_order_x, $_limit, $_offset);
+    }
+    
+    public function fetch_all(){
+        
     }
 
     public function count( array $_x){

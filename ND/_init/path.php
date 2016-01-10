@@ -5,6 +5,8 @@ if( ! defined( 'ND_PATH__FW')){ define( 'ND_PATH__FW', ND_PATH__ROOT . 'ND' .DIR
 */
 // Framework
 if( ! defined( 'ND_PATH__FW_CORE')){ define( 'ND_PATH__FW_CORE', ND_PATH__FW . '_core' . DIRECTORY_SEPARATOR);}
+if( ! defined( 'ND_PATH__FW_CORE_CONNEXION')){ define( 'ND_PATH__FW_CORE_CONNEXION', ND_PATH__FW_CORE . 'connexion' . DIRECTORY_SEPARATOR);}
+if( ! defined( 'ND_PATH__FW_CORE_PDO')){ define( 'ND_PATH__FW_CORE_PDO', ND_PATH__FW_CORE . 'PDO' . DIRECTORY_SEPARATOR);}
 if( ! defined( 'ND_PATH__FW_INIT')){ define( 'ND_PATH__FW_INIT', ND_PATH__FW . '_init' . DIRECTORY_SEPARATOR);}
 if( ! defined( 'ND_PATH__FW_MVC')){ define( 'ND_PATH__FW_MVC', ND_PATH__FW . '_MVC' . DIRECTORY_SEPARATOR);}
 if( ! defined( 'ND_PATH__FW_CONF')){ define( 'ND_PATH__FW_CONF', ND_PATH__FW . 'conf' . DIRECTORY_SEPARATOR);}

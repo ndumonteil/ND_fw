@@ -1,11 +1,9 @@
 <?php
-namespace o\dbals\al;
-use o\exceptions as e;
-use PDO;
-use PDOException;
-use o\ctx\contexts;
+namespace ND\core\connexion;
 
-class conns {
+use ND\exception as e;
+
+class Mysql {
     const CONNS_ARE_SHARED= true; // conf
     private $_target2pdo_o, $_target2conn_digest;
     private $_target2is_connected= [ 'slave'=> false, 'master'=> false];
@@ -23,7 +21,7 @@ class conns {
         if( $this->_target2is_connected[ $_target]) return true;
         $access_type= ($_with_effect? contexts::W: contexts::R);
         $on_master= ('master'== $_target? 1: 0);
-        $this->_ctx_x= contexts::get_instance()->get_context( $this->_ctx_code, $access_type, $on_master);
+        $this->_ctx_x= \ND\core\connexion\contexts::get_instance()->get_context( $this->_ctx_code, $access_type, $on_master);
         $db= $this->_ctx_x[ 'db'];
         $host= $this->_ctx_x[ 'host'];
         $user= $this->_ctx_x[ 'user'];
@@ -43,7 +41,6 @@ class conns {
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                         );
                 $o= new \PDO( $dsn, $user, $pass, $pdo_confx);
-                \o\utils\reg::inc_dyn_meter( ['dbals', 'My', 'conn_nb']);
                 $this->_target2pdo_o[ $_target]= $o;
                 self::$_digest2_pdo_o[ $digest]= $o;
             }
@@ -81,7 +78,7 @@ class conns {
     }
 
     public function begin_transaction(){
-        note( 'My: starting transaction', __FUNCTION__);
+        //note( 'My: starting transaction', __FUNCTION__);
         $this->_connect( $with_effect= true, 'master');
         // Warning inTransaction returns integers not boolean values : http://php.net/manual/en/pdo.intransaction.php
         try {
@@ -95,7 +92,7 @@ class conns {
     }
 
     public function commit(){
-        note( 'My: committing transaction', __FUNCTION__);
+        //note( 'My: committing transaction', __FUNCTION__);
         try {
             $this->_target2pdo_o[ 'master']->commit(); // autocommit mode is turned on now
             return $this->_transaction_rx;
@@ -106,7 +103,7 @@ class conns {
 
     public function rollback(){
         try {
-            note( 'My: rollbacking transaction', '', __FUNCTION__);
+            //note( 'My: rollbacking transaction', '', __FUNCTION__);
             $this->_target2pdo_o[ 'master']->rollback();
             //return an empty array as transaction result because nothing append in database
             return array();
@@ -177,7 +174,7 @@ class conns {
      * @return array
      */
     private function _fetch_enum_column_permitted_vals($_table, $_col){
-        trace( [$_table, $_col], __METHOD__);
+        //trace( [$_table, $_col], __METHOD__);
         $resx= $this->query( "SHOW COLUMNS FROM " . $_table . " LIKE '" . $_col ."'");
         $res= current( $resx[ 'row_xs']);
         $enum= substr( $res[ 'Type'], 6, -2);
@@ -186,7 +183,7 @@ class conns {
     }
 
     public static function destruct_shared_conns(){
-        trace( null, __FUNCTION__);
+        //trace( null, __FUNCTION__);
         self::$_digest2_pdo_o= [];
     }
 

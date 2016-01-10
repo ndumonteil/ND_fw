@@ -17,9 +17,9 @@ class all_e extends Exception {
         }
         $msg= vsprintf( $_msg, $s);
         parent::__construct( $msg, 0, $_e);
-        //error_log( $this);
+        error_log( $this);
     }
-/*
+
     public function __toString(){
         $e= $this;
         $msg= sprintf(
@@ -31,8 +31,7 @@ class all_e extends Exception {
         );
         return $msg;
     }
-*/
-    /*
+
     private function build_formatted_trace( $_ts, $_cr = PHP_EOL, $_popped = null){
         $trace= 'Stack:';
         $ts= array_reverse( $_ts);
@@ -53,7 +52,7 @@ class all_e extends Exception {
         }
         return $trace;
     }
-*/
+
 }
 
 /**
@@ -96,7 +95,7 @@ class not_supported_e extends non_runtime_e {}
 /**
  * Service is instancied twice or more time
  */
-class duplicate_service_e extends non_runtime_e {}
+class service_loading_e extends non_runtime_e {}
 
 /**
  * Thrown if arg is invalid.

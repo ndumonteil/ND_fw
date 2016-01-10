@@ -1,6 +1,8 @@
 <?PHP
-namespace o\ctx;
-use o\exceptions;
+namespace ND\core\connexion;
+
+use ND\exception as e;
+use ND\core\Services_registry as SR;
 
 /**
  * This class is based on the singleton patern
@@ -9,16 +11,12 @@ use o\exceptions;
  * @package \o\yo
  * @author JB <jbourgeais@orchestra.fr>
  */
-class contexts{
+final class Contexts extends \ND\core\Singleton {
     const R = 'READ';
     const W = 'WRITE';
 
-    protected static $instance = null;
-
-    protected $_conf_afi = null;
-
     /**
-     * stores the loaded context from yaml conf file contexts
+     * stores the loaded context from conf file contexts
      *
      * @var array
      * @access protected
@@ -44,27 +42,9 @@ class contexts{
      * @access public
      * @return void
      */
-    public function __construct(){
-        $conf_o= \o\utils\reg::get_instance()->get_conf();
-        $this->_conf_afi = $conf_o->get_afi_from_rfi( ['contexts', 'conf_rfi']);
-        if( ! $this->_contextx = yaml_parse_file($this->_conf_afi)){
-            throw new exceptions\not_found_e("Conf file not found : ".$this->_conf_afi);
-        }
-    }
-
-    /**
-     * Returns the unique instance of the context class
-     *
-     * @static
-     * @author JB <jbourgeais@orchestra.fr>
-     * @access public
-     * @return contexts the unique instance of the context class
-     */
-    public static function get_instance(){
-        if( ! self::$instance){
-            self::$instance = new contexts();
-        }
-        return self::$instance;
+    protected function __construct(){
+        $this->_contextx= SR::get_service( SR::CORE_SERVICE_NAME__CONFIGURATION)->get( 'contexts');
+        var_dump( $this->_contextx);
     }
 
     /**
@@ -78,19 +58,20 @@ class contexts{
      * @return void
      */
     public function activate_context( $_code){
-        if( ! defined('O_ENV_TYPE') ){
-            throw new exceptions\not_found_e("Env type:not defined");
+        if( ! defined('ND_ENV_NAME') ){
+            throw new e\not_found_e("Env type:not defined");
         }
-        if( ! array_key_exists( O_ENV_TYPE, $this->_contextx)){
-            throw new exceptions\non_runtime_e("Env type:".O_ENV_TYPE.":does not exist");
+        if( ! array_key_exists( ND_ENV_NAME, $this->_contextx)){
+            throw new e\non_runtime_e("Env type:".ND_ENV_NAME.":does not exist");
         }
-        if( ! array_key_exists( $_code, $this->_contextx[O_ENV_TYPE])){
-            throw new exceptions\non_runtime_e("Code:$_code:does not exist for Env type:".O_ENV_TYPE);
+        if( ! array_key_exists( $_code, $this->_contextx[ND_ENV_NAME])){
+            throw new e\non_runtime_e("Code:$_code:does not exist for Env type:".ND_ENV_NAME);
         }
-        if( ! array_key_exists( 'master', $this->_contextx[O_ENV_TYPE][$_code])){
-            throw new exceptions\non_runtime_e("Code:$_code:does not exist for Env type:".O_ENV_TYPE);
+        if( ! array_key_exists( 'master', $this->_contextx[ND_ENV_NAME][$_code])){
+            throw new e\non_runtime_e("Code:$_code:does not exist for Env type:".ND_ENV_NAME);
         }
-        $this->_activated_contextx[$_code] = $this->_contextx[O_ENV_TYPE][$_code]['master'];
+        $this->_activated_contextx[$_code] = $this->_contextx[ND_ENV_NAME][$_code]['master'];
+        
         //note('Write context activated', $_code); // KTR: too abundant in logs
     }
 
@@ -123,18 +104,22 @@ class contexts{
      */
     public function get_context( $_code, $_access_type, $_is_master=false){
         if( ! $_is_master && $_access_type == self::W){
-            throw new exceptions\non_runtime_e("Context acces type WRITE and host type SLAVE forbiden");
+            throw new e\non_runtime_e("Context acces type WRITE and host type SLAVE forbiden");
         }
         $host_type = ($_is_master?'master':'slave');
         switch(  $_access_type) {
             case self::W :
-                if( ! array_key_exists( $_code, $this->_activated_contextx)){                   throw new exceptions\non_runtime_e("Le contexte '$_code' n'est pas actif"); }
+                if( ! array_key_exists( $_code, $this->_activated_contextx)){                   
+                    throw new e\non_runtime_e("Le contexte '$_code' n'est pas actif"); }
                 return $this->_activated_contextx[$_code];
             case self::R :
-                if( ! array_key_exists( O_ENV_TYPE  , $this->_contextx)){                       throw new exceptions\non_runtime_e("Env type:".O_ENV_TYPE.":does not exist"); }
-                if( ! array_key_exists( $_code      , $this->_contextx[O_ENV_TYPE])){           throw new exceptions\non_runtime_e("Code:$_code:does not exist for Env type:".O_ENV_TYPE); }
-                if( ! array_key_exists( $host_type  , $this->_contextx[O_ENV_TYPE][$_code])){   throw new exceptions\non_runtime_e("Access type:$host_type does not exist for the context code:$_code"); }
-                return $this->_contextx[O_ENV_TYPE][$_code][$host_type];
+                if( ! array_key_exists( ND_ENV_NAME  , $this->_contextx)){                       
+                    throw new e\non_runtime_e("Env type:".ND_ENV_NAME.":does not exist"); }
+                if( ! array_key_exists( $_code      , $this->_contextx[ND_ENV_NAME])){           
+                    throw new e\non_runtime_e("Code:$_code:does not exist for Env type:".ND_ENV_NAME); }
+                if( ! array_key_exists( $host_type  , $this->_contextx[ND_ENV_NAME][$_code])){   
+                    throw new e\non_runtime_e("Access type:$host_type does not exist for the context code:$_code"); }
+                return $this->_contextx[ND_ENV_NAME][$_code][$host_type];
         }
     }
 
@@ -142,7 +127,7 @@ class contexts{
         return @$this->_conn_x[ $_conn_key];
     }
     public function set_conn_x( $_conn_key, $_conn_x){
-        return @$this->_conn_x[ $_conn_key] = $_conn_x;
+         $this->_conn_x[ $_conn_key]= $_conn_x;
     }
 
 }

@@ -7,9 +7,7 @@ use ND\core\Services_registry as reg;
 
 require_once ND_PATH__FW . '_init' . DIRECTORY_SEPARATOR . 'top_level.php';
 
-final class Kernel {
-
-    private static $_instance;
+final class Kernel extends core\Singleton {
 
     private $_services_loader;
 
@@ -20,18 +18,9 @@ final class Kernel {
     private static $_request;
     private static $_response;
 
-    private function __construct(){
+    protected function __construct(){
         self::$_request= core\Request::get_instance();
         self::$_response= core\Response::get_instance();
-    }
-
-    private function __clone(){}
-
-    public static function get_instance(){
-        if( ! self::$_instance instanceof self){
-            self::$_instance= new self();
-        }
-        return self::$_instance;
     }
 
     public function run( $_app_name, $_init_conf= []){
@@ -65,8 +54,8 @@ final class Kernel {
 
     private function _init( $_init_conf){
         reg::add_service(
-            reg::CORE_SERVICE_NAME__CONFIGURATOR,
-            new service\Configurator( $_init_conf)
+            reg::CORE_SERVICE_NAME__CONFIGURATION,
+            new service\Configuration( $_init_conf)
         );
         $this->_services_loader= new core\Services_loader( $this->_app_name);
         //------------//
@@ -87,7 +76,7 @@ final class Kernel {
     }
 
     private function _control(){
-        $namespace= reg::get_service( reg::CORE_SERVICE_NAME__CONFIGURATOR)
+        $namespace= reg::get_service( reg::CORE_SERVICE_NAME__CONFIGURATION)
             ->get_init_conf( 'app_controller_namespace');
         $controller_class= $namespace . ucfirst( $this->_controller_name);
         $action= $this->_action_name;

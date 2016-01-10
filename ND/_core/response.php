@@ -1,20 +1,9 @@
 <?php
 namespace ND\core;
 
-class Response {
+class Response extends Singleton {
 
-    private static $_instance;
-
-    private function __construct(){}
-
-    private function __clone(){}
-
-    public static function get_instance(){
-        if( ! self::$_instance instanceof self){
-            self::$_instance= new self();
-        }
-        return self::$_instance;
-    }
+    private $_content;
 
     public function get_content(){
         return $this->_content;
@@ -23,4 +12,5 @@ class Response {
     public function set_content( $_content){
         $this->_content= $_content;
     }
+    
 }

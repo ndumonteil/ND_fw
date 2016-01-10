@@ -4,9 +4,9 @@ namespace ND\service;
 use ND\exception as e;
 use ND\tool;
 
-class Configurator {
+class Configuration {
 
-    const CONF_NAME__DATABASES= 'databases';
+    const CONF_NAME__CONTEXTS= 'contexts';
     const CONF_NAME__ROUTER= 'router';
     const CONF_NAME__LOGGER= 'logger';
     const CONF_NAME__SERVICES= 'services';
@@ -27,11 +27,11 @@ class Configurator {
         return @$this->_init_conf[ $_key];
     }
 
-    public function get( $_name, $_keys= null, $_is_optional= false){
+    public function get( $_name, $_keys= null, $_throwable= true){
         if( ! isset( $this->_confx[ $_name])){
             $this->_prepare_conf( $_name);
         }
-        return $this->_get_conf( $_name, $_keys, $_is_optional);
+        return $this->_get_conf( $_name, $_keys, $_throwable);
     }
 
     private function _prepare_conf( $_name){
@@ -75,11 +75,11 @@ class Configurator {
      * @param type $_type
      * @param type $_name
      * @param type $_keys
-     * @param type $_is_optional
+     * @param type $_throwable
      * @return type
      * @throws e\not_found_e
      */
-    private function _get_conf( $_name, $_keys= null, $_is_optional= false){
+    private function _get_conf( $_name, $_keys= null, $_throwable= true){
         if( ! isset( $_name)) return null;
         $conf= @$this->_confx[ $_name];
         if( ! $conf){
@@ -92,7 +92,7 @@ class Configurator {
             $v= $this->_get( $conf, $_keys, $root_key);
             if( isset( $v)) break;
         }
-        if( ! isset( $v) && ! $_is_optional){
+        if( ! isset( $v) && $_throwable){
             $keyz= implode( ', ', $_keys);
             throw new e\not_found_e( 'No conf entry found for [%s]', [ $keyz]);
         }
